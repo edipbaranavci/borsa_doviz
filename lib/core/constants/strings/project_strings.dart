@@ -7,5 +7,5 @@ class ProjectStrings {
 
   ProjectStrings._init();
 
-  final String appTitle = 'Borsa, Döviz, Kripto';
+  final String appTitle = 'Döviz Kripto Borsa';
 }

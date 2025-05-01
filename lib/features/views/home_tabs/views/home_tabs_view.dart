@@ -1,12 +1,18 @@
-import 'package:borsa_doviz/features/views/home_tabs/views/crypto/view/crypto_view.dart';
-import 'package:borsa_doviz/features/views/home_tabs/views/doviz/view/doviz_view.dart';
-import 'package:borsa_doviz/features/views/home_tabs/views/settings/view/settings_view.dart';
+import 'package:borsa_doviz/core/components/button/custom_elevated_text_button.dart';
+import 'package:borsa_doviz/core/components/dialog/custom_dialog.dart';
+
+import 'crypto/view/crypto_view.dart';
+import 'doviz/view/doviz_view.dart';
+import 'settings/view/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
+import 'package:upgrader/upgrader.dart';
 
 import '../cubit/home_tabs_cubit.dart';
 import 'golds/view/golds_view.dart';
+
+part '../viewModel/internet_dialog.dart';
 
 class HomeTabsView extends StatefulWidget {
   const HomeTabsView({super.key});
@@ -29,12 +35,42 @@ class _HomeTabsViewState extends State<HomeTabsView>
 class _HomeTabsView extends StatelessWidget {
   const _HomeTabsView();
 
+  void openDialog(BuildContext context, HomeTabsCubit cubit) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => BlocProvider.value(
+            value: cubit,
+            child: const _ConnectionDialog(),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<HomeTabsCubit>();
-    return Scaffold(
-      body: buildTabBarView(cubit),
-      bottomNavigationBar: buildTabBar(context, cubit),
+    return UpgradeAlert(
+      showIgnore: false,
+      dialogStyle: UpgradeDialogStyle.cupertino,
+      showLater: true,
+      upgrader: Upgrader(
+        languageCode: 'tr',
+        countryCode: 'TR',
+        durationUntilAlertAgain: const Duration(days: 0),
+      ),
+      showReleaseNotes: true,
+      barrierDismissible: true,
+      child: Scaffold(
+        body: BlocListener<HomeTabsCubit, HomeTabsState>(
+          listener: (context, state) {
+            if (state.isConnectInternet == false) {
+              openDialog(context, cubit);
+            }
+          },
+          child: buildTabBarView(cubit),
+        ),
+        bottomNavigationBar: buildTabBar(context, cubit),
+      ),
     );
   }
 
@@ -63,7 +99,7 @@ class _HomeTabsView extends StatelessWidget {
         tabs: [
           Tab(text: 'Döviz', icon: Icon(Icons.money)),
           Tab(text: 'Altın', icon: Icon(Icons.g_mobiledata)),
-          Tab(text: 'Kripto', icon: Icon(Icons.currency_pound_outlined)),
+          Tab(text: 'Kripto', icon: Icon(Icons.currency_bitcoin)),
           Tab(text: 'Ayarlar', icon: Icon(Icons.settings)),
         ],
       ),

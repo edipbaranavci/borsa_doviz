@@ -1,4 +1,6 @@
+import 'package:borsa_doviz/core/extensions/scaffold_messenger/snack_bar.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../core/models/currency/currency_model.dart';
@@ -12,6 +14,8 @@ class DovizCubit extends Cubit<DovizState> {
   DovizCubit() : super(DovizInitial()) {
     init();
   }
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _service = BorsaService();
   final _hiveManager = HiveManager();
@@ -71,7 +75,7 @@ class DovizCubit extends Cubit<DovizState> {
     changeIsLoading(true);
     final res = await _service.fetchCurrency();
     res.fold(
-      (left) => null,
+      (left) => scaffoldKey.showErrorSnackBar(left.errorMessage),
       (right) => emit(state.copyWith(currencyModelList: right)),
     );
     changeIsLoading(false);

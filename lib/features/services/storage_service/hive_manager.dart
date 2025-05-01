@@ -16,7 +16,9 @@ class HiveManager {
 
   Future<void> saveAppThemeMode(ThemeMode themeMode) async {
     try {
-      await _themeModeBox.put(_themeModeModelKey, themeMode);
+      await _themeModeBox.put(_themeModeModelKey, themeMode).whenComplete(() {
+        print('Tema modu kaydedildi!');
+      });
     } catch (e) {
       ErrorModel(e.toString()).printError();
     }

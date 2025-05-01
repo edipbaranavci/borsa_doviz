@@ -49,7 +49,12 @@ class CustomDialog extends StatelessWidget {
           ),
           Text(
             title ?? '',
-            style: context.general.textTheme.titleLarge,
+            style: context.general.textTheme.titleLarge?.copyWith(
+              color:
+                  context.general.appTheme.brightness == Brightness.dark
+                      ? context.general.colorScheme.primary
+                      : context.general.colorScheme.secondary,
+            ),
             textAlign: TextAlign.center,
           ),
           CustomIconButton(

@@ -71,7 +71,8 @@ dependencies:
 
 
   # google play update controller
-  # upgrader: ^11.3.1
+  connectivity_plus: ^6.1.4
+  upgrader: ^11.3.1
 
   # image picker
   # image_picker: ^1.1.2

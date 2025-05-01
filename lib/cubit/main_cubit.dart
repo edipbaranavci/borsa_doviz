@@ -16,7 +16,7 @@ class MainCubit extends Cubit<MainState> {
   Future<void> getAppThemeMode() async {
     final res = await _hiveManager.getAppThemeModel();
     res.fold((left) => null, (right) {
-      // emit(state.copyWith(themeMode: right.themeMode));
+      emit(state.copyWith(themeMode: right));
     });
   }
 

@@ -34,6 +34,7 @@ class _DovizView extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<DovizCubit>();
     return Scaffold(
+      key: cubit.scaffoldKey,
       appBar: AppBar(title: Text(pageTitle), centerTitle: true),
       body: RefreshIndicator(
         onRefresh: () async => cubit.init(),

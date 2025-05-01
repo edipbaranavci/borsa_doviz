@@ -75,7 +75,9 @@ class BorsaService {
       final List<GoldModel> list = [];
       jsonData.forEach((key, value) {
         final element = value as Map<String, dynamic>;
-        if (element['Type'] == 'Gold') {
+        if ((element['Type'] == 'Gold') ||
+            (element['Type'] == 'Palladium') ||
+            (element['Type'] == 'Platinum')) {
           element['Code'] = key;
           element['Buying'] = _safeTurkishLiraFormat(element['Buying']);
           element['Selling'] = _safeTurkishLiraFormat(element['Selling']);
