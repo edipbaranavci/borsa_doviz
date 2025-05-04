@@ -1,7 +1,9 @@
-import '../../../../../../core/models/crypto_model/crypto_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart' show TextEditingController;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../../core/extensions/string/string_extension.dart';
+import '../../../../../../core/models/crypto_model/crypto_model.dart';
 import '../../../../../../core/models/favorite/favorite_model.dart';
 import '../../../../../services/network_service/borsa_service.dart';
 import '../../../../../services/storage_service/hive_manager.dart';
@@ -16,10 +18,41 @@ class CryptoCubit extends Cubit<CryptoState> {
   final _service = BorsaService();
   final _hiveManager = HiveManager();
 
+  final searchController = TextEditingController();
+
   void init() async {
     await fetchCurrencies();
     await getLastUpdateDate();
     getFavorites();
+  }
+
+  void changeSearchedWord() {
+    final word = searchController.text.toConvertEnglish(toLowrecase: true);
+    final List<CryptoModel> searchedCurrencyModelList = [];
+    final cryptoModelList = state.cryptoModelList ?? [];
+    if (word.isNotEmpty) {
+      for (final cryptoModel in cryptoModelList) {
+        final name = (cryptoModel.name ?? '').toConvertEnglish(
+          toLowrecase: true,
+        );
+        final code = (cryptoModel.code ?? '').toConvertEnglish(
+          toLowrecase: true,
+        );
+        if (name.contains(word) || code.contains(word)) {
+          searchedCurrencyModelList.add(cryptoModel);
+        }
+      }
+    }
+    emit(state.copyWith(searchedCryptoModelList: searchedCurrencyModelList));
+  }
+
+  void changeIsOpenSearchBar() {
+    final value = !state.isOpenSearchBar;
+    if (value == false) {
+      searchController.clear();
+      emit(state.copyWith(isOpenSearchBar: value, searchedCryptoModelList: []));
+    }
+    emit(state.copyWith(isOpenSearchBar: value));
   }
 
   void getFavorites() {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
+
 import '../../../../../../core/components/dialog/custom_dialog.dart';
+import '../../../../../../core/constants/views/settings_view_strings.dart';
 import '../../../../../../cubit/main_cubit.dart';
 import '../cubit/settings_cubit.dart';
 
@@ -21,27 +23,6 @@ class SettingsView extends StatelessWidget {
 
 class _SettingsView extends StatelessWidget {
   const _SettingsView();
-  final String pageTitle = 'Ayarlar';
-
-  final String appTitle = 'Uygulama';
-
-  final String themeTitle = 'Tema';
-  final String themeDarkSubTitle = 'Koyu Mod';
-  final String themeLightSubTitle = 'Açık Mod';
-  final String themeSystemSubTitle = 'Sistem Teması';
-  final String helpTitle = 'Yardım';
-  final String contactUsTitle = 'İletişime Geç';
-  final String contactUsSubTitle = 'Tavsiye / Öneri / Hata';
-  final String privacyPoliticyTitle = 'Gizlilik Politikası';
-  final String aboutTitle = 'Hakkında';
-  final String googlePlayStoreTitle = 'Google Play Store';
-  final String googlePlayStoreSubTitle =
-      "Google Play Store' dan yorum yapabilirsin";
-  final String appVersionTitle = 'Uygulama Versiyonu';
-  final String developerTitle = 'Geliştirici';
-  final String websiteTitle = 'Website';
-  final String websiteSubTitle =
-      'Geliştiricinin websitesini ziyaret edebilirsin';
 
   void openThemeModeDialog(BuildContext context, SettingsCubit cubit) {
     showDialog(
@@ -55,7 +36,10 @@ class _SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(pageTitle), centerTitle: true),
+      appBar: AppBar(
+        title: Text(SettingsViewStrings.instance.pageTitle),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: context.padding.low,
         child: Column(
@@ -81,19 +65,19 @@ class _SettingsView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          buildCardTitle(context, appTitle),
+          buildCardTitle(context, SettingsViewStrings.instance.appTitle),
           BlocBuilder<MainCubit, MainState>(
             builder: (context, state) {
               return ListTile(
                 onTap: () => openThemeModeDialog(context, cubit),
                 leading: buildIcon(context, Icons.color_lens),
-                title: Text(themeTitle),
+                title: Text(SettingsViewStrings.instance.themeTitle),
                 subtitle: Text(
                   (state.themeMode) == ThemeMode.dark
-                      ? themeDarkSubTitle
+                      ? SettingsViewStrings.instance.themeDarkSubTitle
                       : (state.themeMode) == ThemeMode.light
-                      ? themeLightSubTitle
-                      : themeSystemSubTitle,
+                      ? SettingsViewStrings.instance.themeLightSubTitle
+                      : SettingsViewStrings.instance.themeSystemSubTitle,
                 ),
                 trailing: Card(
                   color: context.general.colorScheme.onSurface,
@@ -125,17 +109,17 @@ class _SettingsView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          buildCardTitle(context, contactUsTitle),
+          buildCardTitle(context, SettingsViewStrings.instance.contactUsTitle),
           ListTile(
             onTap: () => cubit.openEmailAddress(),
             leading: buildIcon(context, Icons.email),
-            title: Text(contactUsTitle),
-            subtitle: Text(contactUsSubTitle),
+            title: Text(SettingsViewStrings.instance.contactUsTitle),
+            subtitle: Text(SettingsViewStrings.instance.contactUsSubTitle),
           ),
           ListTile(
             onTap: () => cubit.openPrivayPoliticy(),
             leading: buildIcon(context, Icons.privacy_tip),
-            title: Text(privacyPoliticyTitle),
+            title: Text(SettingsViewStrings.instance.privacyPoliticyTitle),
           ),
           context.sized.emptySizedHeightBoxLow,
         ],
@@ -150,16 +134,18 @@ class _SettingsView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          buildCardTitle(context, aboutTitle),
+          buildCardTitle(context, SettingsViewStrings.instance.aboutTitle),
           ListTile(
             onTap: () => cubit.openGooglePlayStore(),
             leading: buildIcon(context, Icons.store),
-            title: Text(googlePlayStoreTitle),
-            subtitle: Text(googlePlayStoreSubTitle),
+            title: Text(SettingsViewStrings.instance.googlePlayStoreTitle),
+            subtitle: Text(
+              SettingsViewStrings.instance.googlePlayStoreSubTitle,
+            ),
           ),
           ListTile(
             leading: buildIcon(context, Icons.verified_sharp),
-            title: Text(appVersionTitle),
+            title: Text(SettingsViewStrings.instance.appVersionTitle),
             subtitle: BlocBuilder<SettingsCubit, SettingsState>(
               builder: (context, state) {
                 return Text(state.appVersion ?? '');
@@ -179,12 +165,12 @@ class _SettingsView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          buildCardTitle(context, developerTitle),
+          buildCardTitle(context, SettingsViewStrings.instance.developerTitle),
           ListTile(
             onTap: () => cubit.openDeveloperWebsite(),
             leading: buildIcon(context, Icons.language),
-            title: Text(websiteTitle),
-            subtitle: Text(websiteSubTitle),
+            title: Text(SettingsViewStrings.instance.websiteTitle),
+            subtitle: Text(SettingsViewStrings.instance.websiteSubTitle),
           ),
           context.sized.emptySizedHeightBoxLow,
         ],

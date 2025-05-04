@@ -1,14 +1,15 @@
-import '../../../../../../core/extensions/date/date_extension.dart';
-import '../../../../../../core/models/favorite/favorite_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
 
 import '../../../../../../core/components/button/custom_icon_button.dart';
+import '../../../../../../core/components/text_field/general_form_field.dart';
+import '../../../../../../core/constants/views/golds_view_strings.dart';
 import '../../../../../../core/models/gold/gold_model.dart';
+import '../../../../../../private/custom_list_tile_card.dart';
+import '../../../../../../private/custom_text.dart';
+import '../../../../../../private/custom_title_text.dart';
 import '../cubit/golds_cubit.dart';
-
-part '../view_models/card.dart';
 
 class GoldsView extends StatelessWidget {
   const GoldsView({super.key});
@@ -25,63 +26,133 @@ class GoldsView extends StatelessWidget {
 class _GoldsView extends StatelessWidget {
   const _GoldsView();
 
-  final String pageTitle = 'Altın';
-  final String lastUpdateTitle = 'Son Güncellenme Tarihi: ';
-  final String addedFavoriteTitle = 'Favoriye Eklenenler';
-  final String generalListTitle = 'Genel Liste';
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GoldsCubit>();
     return Scaffold(
-      appBar: AppBar(title: Text(pageTitle), centerTitle: true),
-      body: RefreshIndicator(
-        onRefresh: () async => cubit.init(),
-        child: BlocBuilder<GoldsCubit, GoldsState>(
-          builder: (context, state) {
-            final list = state.goldModelList ?? [];
-            if (state.isLoading) {
-              return buildLoadingIndicator(context);
-            } else {
-              return SingleChildScrollView(
-                padding: context.padding.low,
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    context.sized.emptySizedHeightBoxLow,
-                    Text(
-                      '$lastUpdateTitle ${state.lastUpdateDate}',
-                      textAlign: TextAlign.center,
-                      style: context.general.textTheme.bodyMedium?.copyWith(
-                        color:
-                            context.general.appTheme.brightness ==
-                                    Brightness.dark
-                                ? context.general.colorScheme.primary
-                                : context.general.colorScheme.secondary,
-                      ),
-                    ),
-                    context.sized.emptySizedHeightBoxLow,
-                    buildFavoritesColumn(),
-                    context.sized.emptySizedHeightBoxLow,
-                    Padding(
+      appBar: AppBar(
+        title: Text(GoldsViewStrings.instance.pageTitle),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          buildSearchBar(cubit),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async => cubit.init(),
+              child: BlocBuilder<GoldsCubit, GoldsState>(
+                builder: (context, state) {
+                  final list = state.goldModelList ?? [];
+                  final searchedList = state.searchedGoldModelList ?? [];
+                  final favoritedList = state.favoriteGoldModelList ?? [];
+                  if (state.isLoading) {
+                    return buildLoadingIndicator(context);
+                  } else {
+                    return SingleChildScrollView(
                       padding: context.padding.low,
-                      child: buildGeneralLitstTitle(context),
-                    ),
-                    context.sized.emptySizedHeightBoxLow,
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        list.length,
-                        (index) =>
-                            _Card(goldModel: list[index], isFavorited: false),
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          context.sized.emptySizedHeightBoxLow,
+                          buildFavoritesColumn(),
+                          context.sized.emptySizedHeightBoxLow,
+                          CustomTitleText(
+                            title: GoldsViewStrings.instance.generalListTitle,
+                          ),
+                          context.sized.emptySizedHeightBoxLow,
+                          buildColumn(
+                            searchedList.isNotEmpty ? searchedList : list,
+                            favoritedList,
+                            cubit,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              );
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column buildColumn(
+    List<GoldModel> list,
+    List<GoldModel> favoritedList,
+    GoldsCubit cubit,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(list.length, (index) {
+        final model = list[index];
+        final isFavorited = favoritedList.contains(model);
+        return CustomListTileCard(
+          isFavorited: favoritedList.contains(model),
+          change: model.change,
+          code: model.code,
+          name: model.name,
+          selling: model.selling,
+          buying: model.buying,
+          onTap: () {
+            if (isFavorited) {
+              cubit.removeFavorite(model);
+            } else {
+              cubit.addFavorite(model);
             }
           },
+        );
+      }),
+    );
+  }
+
+  Widget buildSearchBar(GoldsCubit cubit) {
+    return BlocBuilder<GoldsCubit, GoldsState>(
+      builder: (context, state) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            context.sized.emptySizedWidthBoxLow3x,
+            Expanded(
+              child:
+                  state.isOpenSearchBar
+                      ? buildFormField(context, cubit)
+                      : CustomText(
+                        title:
+                            '${GoldsViewStrings.instance.lastUpdateTitle} ${state.lastUpdateDate ?? 'Yükleniyor...'}',
+                      ),
+            ),
+            context.sized.emptySizedWidthBoxLow,
+            buildSearchButton(state.isOpenSearchBar, cubit),
+            context.sized.emptySizedWidthBoxLow3x,
+          ],
+        );
+      },
+    );
+  }
+
+  Card buildFormField(BuildContext context, GoldsCubit cubit) {
+    return Card(
+      child: Padding(
+        padding: context.padding.low,
+        child: GeneralTextFormField(
+          controller: cubit.searchController,
+          keyboardType: TextInputType.text,
+          onChanged: (_) => cubit.changeSearchedWord(),
         ),
+      ),
+    );
+  }
+
+  Card buildSearchButton(bool isOpenSearchBar, GoldsCubit cubit) {
+    return Card(
+      child: CustomIconButton(
+        iconData: isOpenSearchBar ? Icons.close : Icons.search_outlined,
+        onTap: () => cubit.changeIsOpenSearchBar(),
       ),
     );
   }
@@ -96,6 +167,7 @@ class _GoldsView extends StatelessWidget {
   Widget buildFavoritesColumn() {
     return BlocBuilder<GoldsCubit, GoldsState>(
       builder: (context, state) {
+        final cubit = context.read<GoldsCubit>();
         final favoriteGoldModelList = state.favoriteGoldModelList ?? [];
         final favoriteModelList = state.favoriteModelList ?? [];
         if (favoriteGoldModelList.isEmpty) {
@@ -104,51 +176,31 @@ class _GoldsView extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: context.padding.low,
-                child: buildAddedFavoriteTitle(context),
+              CustomTitleText(
+                title: GoldsViewStrings.instance.addedFavoriteTitle,
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,
-                children: List.generate(
-                  favoriteGoldModelList.length,
-                  (index) => _Card(
-                    goldModel: favoriteGoldModelList[index],
+                children: List.generate(favoriteGoldModelList.length, (index) {
+                  final model = favoriteGoldModelList[index];
+                  return CustomListTileCard(
+                    change: model.change,
+                    code: model.code,
+                    name: model.name,
+                    selling: model.selling,
+                    buying: model.buying,
+                    onTap: () => cubit.removeFavorite(model),
                     isFavorited: true,
                     favoriteModel: favoriteModelList[index],
-                  ),
-                ),
+                    addDate: favoriteModelList[index].dateTime,
+                    addDateSelling: favoriteModelList[index].addDateSelling,
+                  );
+                }),
               ),
             ],
           );
         }
       },
-    );
-  }
-
-  Text buildAddedFavoriteTitle(BuildContext context) {
-    return Text(
-      addedFavoriteTitle,
-      textAlign: TextAlign.left,
-      style: context.general.textTheme.titleLarge?.copyWith(
-        color:
-            context.general.appTheme.brightness == Brightness.dark
-                ? context.general.colorScheme.primary
-                : context.general.colorScheme.onPrimary,
-      ),
-    );
-  }
-
-  Text buildGeneralLitstTitle(BuildContext context) {
-    return Text(
-      generalListTitle,
-      textAlign: TextAlign.left,
-      style: context.general.textTheme.titleLarge?.copyWith(
-        color:
-            context.general.appTheme.brightness == Brightness.dark
-                ? context.general.colorScheme.primary
-                : context.general.colorScheme.onPrimary,
-      ),
     );
   }
 }

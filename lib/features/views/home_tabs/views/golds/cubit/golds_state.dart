@@ -5,6 +5,8 @@ class GoldsState extends Equatable {
   const GoldsState({
     this.isLoading = true,
     this.goldModelList,
+    this.isOpenSearchBar = false,
+    this.searchedGoldModelList,
     this.lastUpdateDate,
     this.favoriteGoldModelList,
     this.favoriteModelList,
@@ -15,6 +17,8 @@ class GoldsState extends Equatable {
   final String? lastUpdateDate;
   final List<GoldModel>? favoriteGoldModelList;
   final List<FavoriteModel>? favoriteModelList;
+  final List<GoldModel>? searchedGoldModelList;
+  final bool isOpenSearchBar;
 
   @override
   List<Object> get props => [
@@ -23,6 +27,8 @@ class GoldsState extends Equatable {
     favoriteModelList ?? [],
     favoriteGoldModelList ?? [],
     lastUpdateDate ?? '',
+    searchedGoldModelList ?? [],
+    isOpenSearchBar,
   ];
 
   GoldsState copyWith({
@@ -31,6 +37,8 @@ class GoldsState extends Equatable {
     String? lastUpdateDate,
     List<GoldModel>? favoriteGoldModelList,
     List<FavoriteModel>? favoriteModelList,
+    List<GoldModel>? searchedGoldModelList,
+    bool? isOpenSearchBar,
   }) {
     return GoldsState(
       isLoading: isLoading ?? this.isLoading,
@@ -39,6 +47,9 @@ class GoldsState extends Equatable {
       favoriteGoldModelList:
           favoriteGoldModelList ?? this.favoriteGoldModelList,
       favoriteModelList: favoriteModelList ?? this.favoriteModelList,
+      searchedGoldModelList:
+          searchedGoldModelList ?? this.searchedGoldModelList,
+      isOpenSearchBar: isOpenSearchBar ?? this.isOpenSearchBar,
     );
   }
 }

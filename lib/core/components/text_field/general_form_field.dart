@@ -31,10 +31,8 @@ class GeneralTextFormField extends StatelessWidget {
   final bool obscureText;
   final VoidCallback? onTap;
   final int? maxLength;
-
   final Color? hintTextColor;
   final Color? labelTextColor;
-
   final String? hintText;
   final String? labelText;
   final Widget? suffixIcon;
@@ -60,7 +58,10 @@ class GeneralTextFormField extends StatelessWidget {
       onChanged: onChanged,
       enableInteractiveSelection: enableInteractiveSelection,
       style: context.general.textTheme.bodyLarge?.copyWith(
-        color: labelTextColor ?? Colors.black,
+        color:
+            context.general.appTheme.brightness == Brightness.dark
+                ? context.general.colorScheme.primary
+                : context.general.colorScheme.onPrimary,
       ),
       onFieldSubmitted: onFieldSubmitted,
       scrollPadding: EdgeInsets.zero,
@@ -73,13 +74,9 @@ class GeneralTextFormField extends StatelessWidget {
           color: hintTextColor ?? context.general.colorScheme.secondary,
         ),
         suffixIcon: suffixIcon,
-        border: border ?? _inputBorder,
         errorStyle: context.general.textTheme.labelSmall?.copyWith(
           color: Colors.red,
         ),
-        enabledBorder: border ?? _inputBorder,
-        disabledBorder: border ?? _inputBorder,
-        focusedBorder: border ?? _inputBorder,
       ),
     );
   }
@@ -90,12 +87,6 @@ class GeneralTextFormField extends StatelessWidget {
       style: context.general.textTheme.bodyLarge?.copyWith(
         color: labelTextColor ?? Colors.black,
       ),
-    );
-  }
-
-  InputBorder get _inputBorder {
-    return const OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.grey, width: 1.5),
     );
   }
 }

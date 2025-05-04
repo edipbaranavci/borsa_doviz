@@ -1,32 +1,49 @@
-part of '../view/doviz_view.dart';
+import 'package:flutter/material.dart';
+import 'package:kartal/kartal.dart';
 
-class _Card extends StatelessWidget {
-  const _Card({
-    required this.goldModel,
+import '../core/components/button/custom_icon_button.dart';
+import '../core/constants/views/custom_list_lite_card_strings.dart';
+import '../core/extensions/date/date_extension.dart';
+import '../core/models/favorite/favorite_model.dart';
+
+class CustomListTileCard extends StatelessWidget {
+  CustomListTileCard({
+    super.key,
     required this.isFavorited,
     this.favoriteModel,
+    this.onTap,
+    this.change,
+    this.name,
+    this.code,
+    this.buying,
+    this.addDate,
+    this.addDateSelling,
+    this.selling,
   });
-  final CurrencyModel goldModel;
   final bool isFavorited;
   final FavoriteModel? favoriteModel;
+  final void Function()? onTap;
+  final String? name;
+  final String? code;
+  final String? buying;
+  final String? addDateSelling;
+  final String? selling;
+  final DateTime? addDate;
 
-  final String addFavoriteTitle = 'Favorilere Ekle';
-  final String removeFavoriteTitle = 'Favorilerden Çıkar';
-  final String addedFavoriteDateTitle = 'Favoriye Eklenme Tarihi: ';
-  final String addedFavoriteSellingTitle =
-      'Favoriye Eklendiğindeki Satış Fiyatı: ';
+  final num? change;
 
+  final _strings = CustomListLiteCardStrings.instance;
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<DovizCubit>();
-
     return Card(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          buildListTile(context, cubit),
-          isFavorited ? buildFavoritedColumn(context) : const SizedBox.shrink(),
+          buildListTile(context),
+          favoriteModel != null
+              ? buildFavoritedColumn(context)
+              : const SizedBox.shrink(),
         ],
       ),
     );
@@ -37,36 +54,51 @@ class _Card extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: context.padding.onlyLeftLow,
-          child: Text(
-            '$addedFavoriteDateTitle ${favoriteModel?.dateTime?.formatTurkishDateTime()}',
-            style: context.general.textTheme.bodySmall?.copyWith(
-              color:
-                  context.general.appTheme.brightness == Brightness.dark
-                      ? context.general.colorScheme.primary
-                      : context.general.colorScheme.secondary,
-            ),
-          ),
+        buildInfoRow(
+          context,
+          Icons.calendar_month,
+          addDate.formatTurkishDateTime(),
         ),
-        Padding(
-          padding: context.padding.onlyLeftLow,
-          child: Text(
-            '$addedFavoriteSellingTitle ${favoriteModel?.addDateSelling}',
-            style: context.general.textTheme.bodySmall?.copyWith(
-              color:
-                  context.general.appTheme.brightness == Brightness.dark
-                      ? context.general.colorScheme.primary
-                      : context.general.colorScheme.secondary,
-            ),
-          ),
+        buildInfoRow(
+          context,
+          Icons.restore,
+          '${favoriteModel?.addDateSelling}',
         ),
         context.sized.emptySizedHeightBoxLow,
       ],
     );
   }
 
-  ListTile buildListTile(BuildContext context, DovizCubit cubit) {
+  Widget buildInfoRow(BuildContext context, IconData iconData, String title) {
+    return Padding(
+      padding: context.padding.onlyLeftLow,
+      child: Row(
+        children: [
+          Icon(
+            iconData,
+            color:
+                context.general.appTheme.brightness == Brightness.dark
+                    ? context.general.colorScheme.primary
+                    : context.general.colorScheme.secondary,
+          ),
+          Padding(
+            padding: context.padding.onlyLeftLow,
+            child: Text(
+              title,
+              style: context.general.textTheme.bodySmall?.copyWith(
+                color:
+                    context.general.appTheme.brightness == Brightness.dark
+                        ? context.general.colorScheme.primary
+                        : context.general.colorScheme.secondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ListTile buildListTile(BuildContext context) {
     return ListTile(
       contentPadding: context.padding.low,
       title: buildCodeTitle(),
@@ -94,31 +126,28 @@ class _Card extends StatelessWidget {
             ],
           ),
           context.sized.emptySizedWidthBoxLow,
-          buildFavoriteIcon(cubit),
+          buildFavoriteIcon(),
         ],
       ),
     );
   }
 
-  CustomIconButton buildFavoriteIcon(DovizCubit cubit) {
+  CustomIconButton buildFavoriteIcon() {
     return CustomIconButton(
       iconData: isFavorited ? Icons.favorite : Icons.favorite_border,
-      onTap: () {
-        if (isFavorited) {
-          cubit.removeFavorite(goldModel);
-        } else {
-          cubit.addFavorite(goldModel);
-        }
-      },
-      toolTip: isFavorited ? removeFavoriteTitle : addFavoriteTitle,
+      onTap: onTap,
+      toolTip:
+          isFavorited
+              ? _strings.removeFavoriteTitle
+              : _strings.addFavoriteTitle,
     );
   }
 
   Text buildChangeTitle(BuildContext context) {
-    final itsUp = (goldModel.change ?? 0) > 0;
-    final itsEqual = (goldModel.change ?? 0) == 0;
+    final itsUp = (change ?? 0) > 0;
+    final itsEqual = (change ?? 0) == 0;
     return Text(
-      '${goldModel.change ?? 0}%',
+      '${change ?? 0}%',
       style: context.general.textTheme.bodyMedium?.copyWith(
         color:
             itsEqual
@@ -131,8 +160,8 @@ class _Card extends StatelessWidget {
   }
 
   Icon buildIcon(BuildContext context) {
-    final itsUp = (goldModel.change ?? 0) > 0;
-    final itsEqual = (goldModel.change ?? 0) == 0;
+    final itsUp = (change ?? 0) > 0;
+    final itsEqual = (change ?? 0) == 0;
     return Icon(
       itsEqual
           ? Icons.equalizer
@@ -149,13 +178,13 @@ class _Card extends StatelessWidget {
     );
   }
 
-  Text buildNameTitle() => Text(goldModel.name ?? '');
+  Text buildNameTitle() => Text(name ?? '');
 
-  Text buildCodeTitle() => Text(goldModel.code ?? '');
+  Text buildCodeTitle() => Text(code ?? '');
 
   Text buildBuyingTitle(BuildContext context) {
     return Text(
-      goldModel.buying ?? '',
+      buying ?? '',
       style: context.general.textTheme.bodySmall?.copyWith(
         color: context.general.colorScheme.secondary,
       ),
@@ -164,7 +193,7 @@ class _Card extends StatelessWidget {
 
   Text buildSellingTitle(BuildContext context) {
     return Text(
-      goldModel.selling ?? '',
+      selling ?? '',
       textAlign: TextAlign.end,
       style: context.general.textTheme.bodyLarge?.copyWith(
         color: context.general.colorScheme.primary,

@@ -1,5 +1,5 @@
-import 'package:borsa_doviz/core/components/button/custom_elevated_text_button.dart';
-import 'package:borsa_doviz/core/components/dialog/custom_dialog.dart';
+import '../../../../core/components/button/custom_elevated_text_button.dart';
+import '../../../../core/components/dialog/custom_dialog.dart';
 
 import 'crypto/view/crypto_view.dart';
 import 'doviz/view/doviz_view.dart';

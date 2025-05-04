@@ -8,6 +8,9 @@ class DovizState extends Equatable {
     this.isLoading = true,
     this.lastUpdateDate,
     this.currencyModelList,
+    this.isOpenSearchBar = false,
+    this.searchedCurrencyModelList,
+    this.isConnectInternet,
   });
 
   final bool isLoading;
@@ -15,6 +18,9 @@ class DovizState extends Equatable {
   final String? lastUpdateDate;
   final List<CurrencyModel>? favoriteCurrencyModelList;
   final List<FavoriteModel>? favoriteModelList;
+  final List<CurrencyModel>? searchedCurrencyModelList;
+  final bool isOpenSearchBar;
+  final bool? isConnectInternet;
 
   @override
   List<Object> get props => [
@@ -23,6 +29,9 @@ class DovizState extends Equatable {
     lastUpdateDate ?? '',
     favoriteCurrencyModelList ?? [],
     favoriteModelList ?? [],
+    isOpenSearchBar,
+    searchedCurrencyModelList ?? [],
+    isConnectInternet ?? false,
   ];
 
   DovizState copyWith({
@@ -31,6 +40,9 @@ class DovizState extends Equatable {
     String? lastUpdateDate,
     List<CurrencyModel>? favoriteCurrencyModelList,
     List<FavoriteModel>? favoriteModelList,
+    List<CurrencyModel>? searchedCurrencyModelList,
+    bool? isOpenSearchBar,
+    bool? isConnectInternet,
   }) {
     return DovizState(
       isLoading: isLoading ?? this.isLoading,
@@ -39,6 +51,10 @@ class DovizState extends Equatable {
       favoriteCurrencyModelList:
           favoriteCurrencyModelList ?? this.favoriteCurrencyModelList,
       favoriteModelList: favoriteModelList ?? this.favoriteModelList,
+      searchedCurrencyModelList:
+          searchedCurrencyModelList ?? this.searchedCurrencyModelList,
+      isOpenSearchBar: isOpenSearchBar ?? this.isOpenSearchBar,
+      isConnectInternet: isConnectInternet ?? this.isConnectInternet,
     );
   }
 }

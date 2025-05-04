@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'crypto_cubit.dart';
 
 class CryptoState extends Equatable {
@@ -8,6 +7,8 @@ class CryptoState extends Equatable {
     this.lastUpdateDate,
     this.favoriteCryptoModelList,
     this.favoriteModelList,
+    this.isOpenSearchBar = false,
+    this.searchedCryptoModelList,
   });
 
   final bool isLoading;
@@ -16,6 +17,9 @@ class CryptoState extends Equatable {
   final List<CryptoModel>? favoriteCryptoModelList;
   final List<FavoriteModel>? favoriteModelList;
 
+  final List<CryptoModel>? searchedCryptoModelList;
+  final bool isOpenSearchBar;
+
   @override
   List<Object> get props => [
     isLoading,
@@ -23,6 +27,8 @@ class CryptoState extends Equatable {
     cryptoModelList ?? [],
     favoriteCryptoModelList ?? [],
     favoriteModelList ?? [],
+    isOpenSearchBar,
+    searchedCryptoModelList ?? [],
   ];
 
   CryptoState copyWith({
@@ -31,6 +37,8 @@ class CryptoState extends Equatable {
     List<CryptoModel>? cryptoModelList,
     List<CryptoModel>? favoriteCryptoModelList,
     List<FavoriteModel>? favoriteModelList,
+    List<CryptoModel>? searchedCryptoModelList,
+    bool? isOpenSearchBar,
   }) {
     return CryptoState(
       isLoading: isLoading ?? this.isLoading,
@@ -39,6 +47,9 @@ class CryptoState extends Equatable {
       favoriteCryptoModelList:
           favoriteCryptoModelList ?? this.favoriteCryptoModelList,
       favoriteModelList: favoriteModelList ?? this.favoriteModelList,
+      searchedCryptoModelList:
+          searchedCryptoModelList ?? this.searchedCryptoModelList,
+      isOpenSearchBar: isOpenSearchBar ?? this.isOpenSearchBar,
     );
   }
 }

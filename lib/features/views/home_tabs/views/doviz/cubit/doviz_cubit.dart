@@ -1,4 +1,5 @@
-import 'package:borsa_doviz/core/extensions/scaffold_messenger/snack_bar.dart';
+import '../../../../../../core/extensions/scaffold_messenger/snack_bar.dart';
+import '../../../../../../core/extensions/string/string_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../core/models/currency/currency_model.dart';
 import '../../../../../../core/models/favorite/favorite_model.dart';
 import '../../../../../services/network_service/borsa_service.dart';
+import '../../../../../services/network_service/internet_connection_service.dart';
 import '../../../../../services/storage_service/hive_manager.dart';
 
 part 'doviz_state.dart';
@@ -20,10 +22,50 @@ class DovizCubit extends Cubit<DovizState> {
   final _service = BorsaService();
   final _hiveManager = HiveManager();
 
+  final searchController = TextEditingController();
+  final _internetConnectionService = InternetConnectionService();
+
   void init() async {
+    await checkInternetConnection();
     await fetchCurrencies();
     await getLastUpdateDate();
     getFavorites();
+  }
+
+  Future<void> checkInternetConnection() async {
+    final control = await _internetConnectionService.checkInternetConnection();
+    emit(state.copyWith(isConnectInternet: control));
+  }
+
+  void changeSearchedWord() {
+    final word = searchController.text.toConvertEnglish(toLowrecase: true);
+    final List<CurrencyModel> searchedCurrencyModelList = [];
+    final currencyModelList = state.currencyModelList ?? [];
+    if (word.isNotEmpty) {
+      for (final currencyModel in currencyModelList) {
+        final name = (currencyModel.name ?? '').toConvertEnglish(
+          toLowrecase: true,
+        );
+        final code = (currencyModel.code ?? '').toConvertEnglish(
+          toLowrecase: true,
+        );
+        if (name.contains(word) || code.contains(word)) {
+          searchedCurrencyModelList.add(currencyModel);
+        }
+      }
+    }
+    emit(state.copyWith(searchedCurrencyModelList: searchedCurrencyModelList));
+  }
+
+  void changeIsOpenSearchBar() {
+    final value = !state.isOpenSearchBar;
+    if (value == false) {
+      searchController.clear();
+      emit(
+        state.copyWith(isOpenSearchBar: value, searchedCurrencyModelList: []),
+      );
+    }
+    emit(state.copyWith(isOpenSearchBar: value));
   }
 
   void getFavorites() {

@@ -16,12 +16,11 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   final _hiveManager = HiveManager();
 
-  // final String _playStoreUrl =
-  //     'https://play.google.com/store/apps/details?id=com.ekabav.safak_sayar';
-  final String _privacyPoliticyUrl =
-      'https://www.ekabav.dev/p/gizlilik-politikasi.html';
+  final String _playStoreUrl =
+      'https://play.google.com/store/apps/details?id=com.ekabav.borsa_doviz';
+  final String _privacyPoliticyUrl = 'p/gizlilik-politikasi.html';
   final String _emailAddress = 'ekabavapps@gmail.com';
-  final String _websiteUrl = 'https://www.ekabav.dev/';
+  final String _websiteUrl = 'http://ekabav.blogspot.com/';
 
   Future<void> _init() async {
     await _getAppVersion();
@@ -41,17 +40,17 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   Future<void> openPrivayPoliticy() async {
-    final url = Uri.parse(_privacyPoliticyUrl);
+    final url = Uri.parse('$_websiteUrl$_privacyPoliticyUrl');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       Logger().e(Exception('Could not launch $url'));
     }
   }
 
   Future<void> openGooglePlayStore() async {
-    // final url = Uri.parse(_playStoreUrl);
-    // if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-    //   Logger().e(Exception('Could not launch $url'));
-    // }
+    final url = Uri.parse(_playStoreUrl);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      Logger().e(Exception('Could not launch $url'));
+    }
   }
 
   Future<void> openDeveloperWebsite() async {

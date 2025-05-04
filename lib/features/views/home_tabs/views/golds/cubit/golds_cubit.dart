@@ -1,5 +1,7 @@
+import 'package:borsa_doviz/core/extensions/string/string_extension.dart';
 import 'package:borsa_doviz/core/models/favorite/favorite_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../core/models/gold/gold_model.dart';
@@ -15,11 +17,41 @@ class GoldsCubit extends Cubit<GoldsState> {
 
   final _service = BorsaService();
   final _hiveManager = HiveManager();
+  final searchController = TextEditingController();
 
   void init() async {
     await fetchGold();
     await getLastUpdateDate();
     getFavorites();
+  }
+
+  void changeSearchedWord() {
+    final word = searchController.text.toConvertEnglish(toLowrecase: true);
+    final List<GoldModel> searchedGoldModelList = [];
+    final goldModelList = state.goldModelList ?? [];
+    if (word.isNotEmpty) {
+      for (final currencyModel in goldModelList) {
+        final name = (currencyModel.name ?? '').toConvertEnglish(
+          toLowrecase: true,
+        );
+        final code = (currencyModel.code ?? '').toConvertEnglish(
+          toLowrecase: true,
+        );
+        if (name.contains(word) || code.contains(word)) {
+          searchedGoldModelList.add(currencyModel);
+        }
+      }
+    }
+    emit(state.copyWith(searchedGoldModelList: searchedGoldModelList));
+  }
+
+  void changeIsOpenSearchBar() {
+    final value = !state.isOpenSearchBar;
+    if (value == false) {
+      searchController.clear();
+      emit(state.copyWith(isOpenSearchBar: value, searchedGoldModelList: []));
+    }
+    emit(state.copyWith(isOpenSearchBar: value));
   }
 
   void getFavorites() {
