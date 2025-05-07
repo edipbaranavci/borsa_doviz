@@ -1,18 +1,14 @@
-import '../../../../core/components/button/custom_elevated_text_button.dart';
-import '../../../../core/components/dialog/custom_dialog.dart';
-
-import 'crypto/view/crypto_view.dart';
-import 'doviz/view/doviz_view.dart';
-import 'settings/view/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
 import 'package:upgrader/upgrader.dart';
 
+import '../../../../core/constants/views/home_tabs_view_strings.dart';
 import '../cubit/home_tabs_cubit.dart';
+import 'crypto/view/crypto_view.dart';
+import 'doviz/view/doviz_view.dart';
 import 'golds/view/golds_view.dart';
-
-part '../viewModel/internet_dialog.dart';
+import 'settings/view/settings_view.dart';
 
 class HomeTabsView extends StatefulWidget {
   const HomeTabsView({super.key});
@@ -35,17 +31,6 @@ class _HomeTabsViewState extends State<HomeTabsView>
 class _HomeTabsView extends StatelessWidget {
   const _HomeTabsView();
 
-  void openDialog(BuildContext context, HomeTabsCubit cubit) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => BlocProvider.value(
-            value: cubit,
-            child: const _ConnectionDialog(),
-          ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<HomeTabsCubit>();
@@ -61,14 +46,7 @@ class _HomeTabsView extends StatelessWidget {
       showReleaseNotes: true,
       barrierDismissible: true,
       child: Scaffold(
-        body: BlocListener<HomeTabsCubit, HomeTabsState>(
-          listener: (context, state) {
-            if (state.isConnectInternet == false) {
-              openDialog(context, cubit);
-            }
-          },
-          child: buildTabBarView(cubit),
-        ),
+        body: buildTabBarView(cubit),
         bottomNavigationBar: buildTabBar(context, cubit),
       ),
     );
@@ -88,6 +66,7 @@ class _HomeTabsView extends StatelessWidget {
       child: TabBar(
         controller: cubit.tabController,
         dividerColor: Colors.transparent,
+        onTap: (value) => cubit.setTabIndex(value),
         isScrollable: false,
         padding: EdgeInsets.zero,
         labelPadding: EdgeInsets.zero,
@@ -97,10 +76,22 @@ class _HomeTabsView extends StatelessWidget {
         labelStyle: context.general.textTheme.bodySmall,
         indicatorSize: TabBarIndicatorSize.label,
         tabs: [
-          Tab(text: 'Döviz', icon: Icon(Icons.money)),
-          Tab(text: 'Altın', icon: Icon(Icons.g_mobiledata)),
-          Tab(text: 'Kripto', icon: Icon(Icons.currency_bitcoin)),
-          Tab(text: 'Ayarlar', icon: Icon(Icons.settings)),
+          Tab(
+            text: HomeTabsViewStrings.instance.dovizTitle,
+            icon: Icon(Icons.money),
+          ),
+          Tab(
+            text: HomeTabsViewStrings.instance.goldTitle,
+            icon: Icon(Icons.g_mobiledata),
+          ),
+          Tab(
+            text: HomeTabsViewStrings.instance.cryptoTitle,
+            icon: Icon(Icons.currency_bitcoin),
+          ),
+          Tab(
+            text: HomeTabsViewStrings.instance.settingsTitle,
+            icon: Icon(Icons.settings),
+          ),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'package:borsa_doviz/private/ads/view/ads_view.dart';
+import 'package:borsa_doviz/private/dialog/internet_connection_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
@@ -26,6 +28,13 @@ class GoldsView extends StatelessWidget {
 class _GoldsView extends StatelessWidget {
   const _GoldsView();
 
+  void openDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const ConnectionDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GoldsCubit>();
@@ -40,7 +49,12 @@ class _GoldsView extends StatelessWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async => cubit.init(),
-              child: BlocBuilder<GoldsCubit, GoldsState>(
+              child: BlocConsumer<GoldsCubit, GoldsState>(
+                listener: (context, state) {
+                  if (state.isConnectInternet == false) {
+                    openDialog(context);
+                  }
+                },
                 builder: (context, state) {
                   final list = state.goldModelList ?? [];
                   final searchedList = state.searchedGoldModelList ?? [];
@@ -89,20 +103,28 @@ class _GoldsView extends StatelessWidget {
       children: List.generate(list.length, (index) {
         final model = list[index];
         final isFavorited = favoritedList.contains(model);
-        return CustomListTileCard(
-          isFavorited: favoritedList.contains(model),
-          change: model.change,
-          code: model.code,
-          name: model.name,
-          selling: model.selling,
-          buying: model.buying,
-          onTap: () {
-            if (isFavorited) {
-              cubit.removeFavorite(model);
-            } else {
-              cubit.addFavorite(model);
-            }
-          },
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomListTileCard(
+              isFavorited: favoritedList.contains(model),
+              change: model.change,
+              code: model.code,
+              name: model.name,
+              selling: model.selling,
+              buying: model.buying,
+              onTap: () {
+                if (isFavorited) {
+                  cubit.removeFavorite(model);
+                } else {
+                  cubit.addFavorite(model);
+                }
+              },
+            ),
+            (index % 10 == 0 && index != 0)
+                ? AdsView()
+                : const SizedBox.shrink(),
+          ],
         );
       }),
     );
@@ -123,7 +145,7 @@ class _GoldsView extends StatelessWidget {
                       ? buildFormField(context, cubit)
                       : CustomText(
                         title:
-                            '${GoldsViewStrings.instance.lastUpdateTitle} ${state.lastUpdateDate ?? 'Yükleniyor...'}',
+                            '${GoldsViewStrings.instance.lastUpdateTitle}\n${state.lastUpdateDate ?? 'Yükleniyor...'}',
                       ),
             ),
             context.sized.emptySizedWidthBoxLow,

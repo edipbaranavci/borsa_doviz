@@ -1,7 +1,6 @@
-import 'package:borsa_doviz/private/custom_list_tile_card.dart';
+import '../../../../../../private/ads/view/ads_view.dart';
+import '../../../../../../private/custom_list_tile_card.dart';
 
-import '../../../../../../core/components/button/custom_elevated_text_button.dart';
-import '../../../../../../core/components/dialog/custom_dialog.dart';
 import '../../../../../../core/components/text_field/general_form_field.dart';
 import '../../../../../../core/constants/views/doviz_view_strings.dart';
 import '../../../../../../core/models/currency/currency_model.dart';
@@ -12,9 +11,8 @@ import 'package:kartal/kartal.dart';
 import '../../../../../../core/components/button/custom_icon_button.dart';
 import '../../../../../../private/custom_title_text.dart';
 import '../../../../../../private/custom_text.dart';
+import '../../../../../../private/dialog/internet_connection_dialog.dart';
 import '../cubit/doviz_cubit.dart';
-
-part '../view_models/dialog.dart';
 
 class DovizView extends StatelessWidget {
   const DovizView({super.key});
@@ -31,14 +29,10 @@ class DovizView extends StatelessWidget {
 class _DovizView extends StatelessWidget {
   const _DovizView();
 
-  void openDialog(BuildContext context, DovizCubit cubit) {
+  void openDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (context) => BlocProvider.value(
-            value: cubit,
-            child: const _ConnectionDialog(),
-          ),
+      builder: (context) => const ConnectionDialog(),
     );
   }
 
@@ -61,7 +55,7 @@ class _DovizView extends StatelessWidget {
               child: BlocConsumer<DovizCubit, DovizState>(
                 listener: (context, state) {
                   if (state.isConnectInternet == false) {
-                    openDialog(context, cubit);
+                    openDialog(context);
                   }
                 },
                 builder: (context, state) {
@@ -112,20 +106,28 @@ class _DovizView extends StatelessWidget {
       children: List.generate(list.length, (index) {
         final model = list[index];
         final isFavorited = favoritedList.contains(model);
-        return CustomListTileCard(
-          isFavorited: favoritedList.contains(model),
-          change: model.change,
-          code: model.code,
-          name: model.name,
-          selling: model.selling,
-          buying: model.buying,
-          onTap: () {
-            if (isFavorited) {
-              cubit.removeFavorite(model);
-            } else {
-              cubit.addFavorite(model);
-            }
-          },
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomListTileCard(
+              isFavorited: favoritedList.contains(model),
+              change: model.change,
+              code: model.code,
+              name: model.name,
+              selling: model.selling,
+              buying: model.buying,
+              onTap: () {
+                if (isFavorited) {
+                  cubit.removeFavorite(model);
+                } else {
+                  cubit.addFavorite(model);
+                }
+              },
+            ),
+            (index % 10 == 0 && index != 0)
+                ? AdsView()
+                : const SizedBox.shrink(),
+          ],
         );
       }),
     );
@@ -146,7 +148,7 @@ class _DovizView extends StatelessWidget {
                       ? buildFormField(context, cubit)
                       : CustomText(
                         title:
-                            '${DovizViewStrings.instance.lastUpdateTitle} ${state.lastUpdateDate ?? 'Yükleniyor...'}',
+                            '${DovizViewStrings.instance.lastUpdateTitle}\n${state.lastUpdateDate ?? 'Yükleniyor...'}',
                       ),
             ),
             context.sized.emptySizedWidthBoxLow,

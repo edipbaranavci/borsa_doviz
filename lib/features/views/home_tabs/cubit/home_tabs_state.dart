@@ -1,18 +1,10 @@
 part of 'home_tabs_cubit.dart';
 
 class HomeTabsState extends Equatable {
-  const HomeTabsState({this.isConnectInternet});
-
-  final bool? isConnectInternet;
+  const HomeTabsState();
 
   @override
-  List<Object> get props => [isConnectInternet ?? ''];
-
-  HomeTabsState copyWith({bool? isConnectInternet}) {
-    return HomeTabsState(
-      isConnectInternet: isConnectInternet ?? this.isConnectInternet,
-    );
-  }
+  List<Object> get props => [];
 }
 
 final class HomeTabsInitial extends HomeTabsState {}

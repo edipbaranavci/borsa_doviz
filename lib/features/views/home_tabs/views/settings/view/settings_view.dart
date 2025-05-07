@@ -1,3 +1,4 @@
+import 'package:borsa_doviz/core/components/app_bar/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
@@ -8,6 +9,7 @@ import '../../../../../../cubit/main_cubit.dart';
 import '../cubit/settings_cubit.dart';
 
 part '../view_models/theme_mode_dialog.dart';
+part '../view_models/resources_view.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -62,42 +64,45 @@ class _SettingsView extends StatelessWidget {
     final cubit = context.read<SettingsCubit>();
     return Card(
       elevation: 8,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildCardTitle(context, SettingsViewStrings.instance.appTitle),
-          BlocBuilder<MainCubit, MainState>(
-            builder: (context, state) {
-              return ListTile(
-                onTap: () => openThemeModeDialog(context, cubit),
-                leading: buildIcon(context, Icons.color_lens),
-                title: Text(SettingsViewStrings.instance.themeTitle),
-                subtitle: Text(
-                  (state.themeMode) == ThemeMode.dark
-                      ? SettingsViewStrings.instance.themeDarkSubTitle
-                      : (state.themeMode) == ThemeMode.light
-                      ? SettingsViewStrings.instance.themeLightSubTitle
-                      : SettingsViewStrings.instance.themeSystemSubTitle,
-                ),
-                trailing: Card(
-                  color: context.general.colorScheme.onSurface,
-                  child: Padding(
-                    padding: context.padding.low,
-                    child: Icon(
-                      Icons.palette,
-                      color:
-                          context.general.colorScheme.brightness ==
-                                  Brightness.dark
-                              ? Colors.black
-                              : Colors.white,
+      child: Padding(
+        padding: context.padding.horizontalLow,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildCardTitle(context, SettingsViewStrings.instance.appTitle),
+            BlocBuilder<MainCubit, MainState>(
+              builder: (context, state) {
+                return ListTile(
+                  onTap: () => openThemeModeDialog(context, cubit),
+                  leading: buildIcon(context, Icons.color_lens),
+                  title: Text(SettingsViewStrings.instance.themeTitle),
+                  subtitle: Text(
+                    (state.themeMode) == ThemeMode.dark
+                        ? SettingsViewStrings.instance.themeDarkSubTitle
+                        : (state.themeMode) == ThemeMode.light
+                        ? SettingsViewStrings.instance.themeLightSubTitle
+                        : SettingsViewStrings.instance.themeSystemSubTitle,
+                  ),
+                  trailing: Card(
+                    color: context.general.colorScheme.onSurface,
+                    child: Padding(
+                      padding: context.padding.low,
+                      child: Icon(
+                        Icons.palette,
+                        color:
+                            context.general.colorScheme.brightness ==
+                                    Brightness.dark
+                                ? Colors.black
+                                : Colors.white,
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          ),
-          context.sized.emptySizedHeightBoxLow,
-        ],
+                );
+              },
+            ),
+            context.sized.emptySizedHeightBoxLow,
+          ],
+        ),
       ),
     );
   }
@@ -106,23 +111,29 @@ class _SettingsView extends StatelessWidget {
     final cubit = context.read<SettingsCubit>();
     return Card(
       elevation: 8,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildCardTitle(context, SettingsViewStrings.instance.contactUsTitle),
-          ListTile(
-            onTap: () => cubit.openEmailAddress(),
-            leading: buildIcon(context, Icons.email),
-            title: Text(SettingsViewStrings.instance.contactUsTitle),
-            subtitle: Text(SettingsViewStrings.instance.contactUsSubTitle),
-          ),
-          ListTile(
-            onTap: () => cubit.openPrivayPoliticy(),
-            leading: buildIcon(context, Icons.privacy_tip),
-            title: Text(SettingsViewStrings.instance.privacyPoliticyTitle),
-          ),
-          context.sized.emptySizedHeightBoxLow,
-        ],
+      child: Padding(
+        padding: context.padding.horizontalLow,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildCardTitle(
+              context,
+              SettingsViewStrings.instance.contactUsTitle,
+            ),
+            ListTile(
+              onTap: () => cubit.openEmailAddress(),
+              leading: buildIcon(context, Icons.email),
+              title: Text(SettingsViewStrings.instance.contactUsTitle),
+              subtitle: Text(SettingsViewStrings.instance.contactUsSubTitle),
+            ),
+            ListTile(
+              onTap: () => cubit.openPrivayPoliticy(),
+              leading: buildIcon(context, Icons.privacy_tip),
+              title: Text(SettingsViewStrings.instance.privacyPoliticyTitle),
+            ),
+            context.sized.emptySizedHeightBoxLow,
+          ],
+        ),
       ),
     );
   }
@@ -131,29 +142,32 @@ class _SettingsView extends StatelessWidget {
     final cubit = context.read<SettingsCubit>();
     return Card(
       elevation: 8,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildCardTitle(context, SettingsViewStrings.instance.aboutTitle),
-          ListTile(
-            onTap: () => cubit.openGooglePlayStore(),
-            leading: buildIcon(context, Icons.store),
-            title: Text(SettingsViewStrings.instance.googlePlayStoreTitle),
-            subtitle: Text(
-              SettingsViewStrings.instance.googlePlayStoreSubTitle,
+      child: Padding(
+        padding: context.padding.horizontalLow,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildCardTitle(context, SettingsViewStrings.instance.aboutTitle),
+            ListTile(
+              onTap: () => cubit.openGooglePlayStore(),
+              leading: buildIcon(context, Icons.store),
+              title: Text(SettingsViewStrings.instance.googlePlayStoreTitle),
+              subtitle: Text(
+                SettingsViewStrings.instance.googlePlayStoreSubTitle,
+              ),
             ),
-          ),
-          ListTile(
-            leading: buildIcon(context, Icons.verified_sharp),
-            title: Text(SettingsViewStrings.instance.appVersionTitle),
-            subtitle: BlocBuilder<SettingsCubit, SettingsState>(
-              builder: (context, state) {
-                return Text(state.appVersion ?? '');
-              },
+            ListTile(
+              leading: buildIcon(context, Icons.verified_sharp),
+              title: Text(SettingsViewStrings.instance.appVersionTitle),
+              subtitle: BlocBuilder<SettingsCubit, SettingsState>(
+                builder: (context, state) {
+                  return Text(state.appVersion ?? '');
+                },
+              ),
             ),
-          ),
-          context.sized.emptySizedHeightBoxLow,
-        ],
+            context.sized.emptySizedHeightBoxLow,
+          ],
+        ),
       ),
     );
   }
@@ -162,18 +176,32 @@ class _SettingsView extends StatelessWidget {
     final cubit = context.read<SettingsCubit>();
     return Card(
       elevation: 8,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildCardTitle(context, SettingsViewStrings.instance.developerTitle),
-          ListTile(
-            onTap: () => cubit.openDeveloperWebsite(),
-            leading: buildIcon(context, Icons.language),
-            title: Text(SettingsViewStrings.instance.websiteTitle),
-            subtitle: Text(SettingsViewStrings.instance.websiteSubTitle),
-          ),
-          context.sized.emptySizedHeightBoxLow,
-        ],
+      child: Padding(
+        padding: context.padding.horizontalLow,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildCardTitle(
+              context,
+              SettingsViewStrings.instance.developerTitle,
+            ),
+            ListTile(
+              onTap: () => context.route.navigateToPage(_ResourcesView()),
+              leading: buildIcon(context, Icons.app_registration_rounded),
+              title: Text(SettingsViewStrings.instance.resourcesUsedTitle),
+              subtitle: Text(
+                SettingsViewStrings.instance.resourcesUsedSubTitle,
+              ),
+            ),
+            ListTile(
+              onTap: () => cubit.openDeveloperWebsite(),
+              leading: buildIcon(context, Icons.language),
+              title: Text(SettingsViewStrings.instance.websiteTitle),
+              subtitle: Text(SettingsViewStrings.instance.websiteSubTitle),
+            ),
+            context.sized.emptySizedHeightBoxLow,
+          ],
+        ),
       ),
     );
   }

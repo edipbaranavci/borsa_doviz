@@ -1,11 +1,12 @@
-import 'package:borsa_doviz/core/extensions/string/string_extension.dart';
-import 'package:borsa_doviz/core/models/favorite/favorite_model.dart';
+import '../../../../../../core/extensions/string/string_extension.dart';
+import '../../../../../../core/models/favorite/favorite_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../core/models/gold/gold_model.dart';
 import '../../../../../services/network_service/borsa_service.dart';
+import '../../../../../services/network_service/internet_connection_service.dart';
 import '../../../../../services/storage_service/hive_manager.dart';
 
 part 'golds_state.dart';
@@ -18,11 +19,18 @@ class GoldsCubit extends Cubit<GoldsState> {
   final _service = BorsaService();
   final _hiveManager = HiveManager();
   final searchController = TextEditingController();
+  final _internetConnectionService = InternetConnectionService();
 
   void init() async {
+    await checkInternetConnection();
     await fetchGold();
     await getLastUpdateDate();
     getFavorites();
+  }
+
+  Future<void> checkInternetConnection() async {
+    final control = await _internetConnectionService.checkInternetConnection();
+    emit(state.copyWith(isConnectInternet: control));
   }
 
   void changeSearchedWord() {

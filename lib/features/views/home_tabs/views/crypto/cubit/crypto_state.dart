@@ -9,6 +9,7 @@ class CryptoState extends Equatable {
     this.favoriteModelList,
     this.isOpenSearchBar = false,
     this.searchedCryptoModelList,
+    this.isConnectInternet,
   });
 
   final bool isLoading;
@@ -16,6 +17,7 @@ class CryptoState extends Equatable {
   final List<CryptoModel>? cryptoModelList;
   final List<CryptoModel>? favoriteCryptoModelList;
   final List<FavoriteModel>? favoriteModelList;
+  final bool? isConnectInternet;
 
   final List<CryptoModel>? searchedCryptoModelList;
   final bool isOpenSearchBar;
@@ -29,6 +31,7 @@ class CryptoState extends Equatable {
     favoriteModelList ?? [],
     isOpenSearchBar,
     searchedCryptoModelList ?? [],
+    isConnectInternet ?? '',
   ];
 
   CryptoState copyWith({
@@ -39,6 +42,7 @@ class CryptoState extends Equatable {
     List<FavoriteModel>? favoriteModelList,
     List<CryptoModel>? searchedCryptoModelList,
     bool? isOpenSearchBar,
+    bool? isConnectInternet,
   }) {
     return CryptoState(
       isLoading: isLoading ?? this.isLoading,
@@ -50,6 +54,7 @@ class CryptoState extends Equatable {
       searchedCryptoModelList:
           searchedCryptoModelList ?? this.searchedCryptoModelList,
       isOpenSearchBar: isOpenSearchBar ?? this.isOpenSearchBar,
+      isConnectInternet: isConnectInternet ?? this.isConnectInternet,
     );
   }
 }

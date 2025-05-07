@@ -5,7 +5,7 @@ class CryptoViewStrings {
   static CryptoViewStrings get instance => _instance ??= CryptoViewStrings._();
 
   final String pageTitle = 'Kripto';
-  final String lastUpdateTitle = 'Son Güncellenme Tarihi: ';
+  final String lastUpdateTitle = 'Son Güncellenme';
   final String addedFavoriteTitle = 'Favoriye Eklenenler';
   final String generalListTitle = 'Genel Liste';
 }

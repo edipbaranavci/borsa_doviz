@@ -1,3 +1,4 @@
+import 'package:borsa_doviz/core/models/tab_index/tab_index_model.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -12,15 +13,39 @@ class HiveManager {
   final _themeModeBox = Hive.box<ThemeMode>(
     HiveStrings.instance.hiveThemeModeBoxKey,
   );
+  final _tabIndexBox = Hive.box<TabIndexModel>(
+    HiveStrings.instance.hiveTabIndexKey,
+  );
   final String _themeModeModelKey = '_themeModeModelKey';
+  final String _tabIndexModelKey = '_tabIndexModelKey';
 
   Future<void> saveAppThemeMode(ThemeMode themeMode) async {
     try {
-      await _themeModeBox.put(_themeModeModelKey, themeMode).whenComplete(() {
-        print('Tema modu kaydedildi!');
-      });
+      await _themeModeBox.put(_themeModeModelKey, themeMode);
     } catch (e) {
       ErrorModel(e.toString()).printError();
+    }
+  }
+
+  Future<void> saveTabIndexModel(int index) async {
+    try {
+      await _tabIndexBox.put(_tabIndexModelKey, TabIndexModel(index: index));
+    } catch (e) {
+      ErrorModel(e.toString()).printError();
+    }
+  }
+
+  Future<Either<ErrorModel, int>> getTabIndex() async {
+    try {
+      final tabIndexModel = _tabIndexBox.get(_tabIndexModelKey);
+      if (tabIndexModel != null) {
+        return Right(tabIndexModel.index ?? 0);
+      } else {
+        return Left(ErrorModel('TabIndex Kaydı Bulunamadı!'));
+      }
+    } catch (e) {
+      Logger().e(e.toString());
+      return Left(ErrorModel('HiveManager:getTabIndex() ${e.toString()}'));
     }
   }
 

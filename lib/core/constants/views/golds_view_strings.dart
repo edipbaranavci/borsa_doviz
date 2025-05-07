@@ -5,7 +5,7 @@ class GoldsViewStrings {
   static GoldsViewStrings get instance => _instance ??= GoldsViewStrings._();
 
   final String pageTitle = 'Altın';
-  final String lastUpdateTitle = 'Son Güncellenme Tarihi: ';
+  final String lastUpdateTitle = 'Son Güncellenme';
   final String addedFavoriteTitle = 'Favoriye Eklenenler';
   final String generalListTitle = 'Genel Liste';
 }

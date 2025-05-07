@@ -6,6 +6,7 @@ import '../../../../../../core/extensions/string/string_extension.dart';
 import '../../../../../../core/models/crypto_model/crypto_model.dart';
 import '../../../../../../core/models/favorite/favorite_model.dart';
 import '../../../../../services/network_service/borsa_service.dart';
+import '../../../../../services/network_service/internet_connection_service.dart';
 import '../../../../../services/storage_service/hive_manager.dart';
 
 part 'crypto_state.dart';
@@ -19,11 +20,18 @@ class CryptoCubit extends Cubit<CryptoState> {
   final _hiveManager = HiveManager();
 
   final searchController = TextEditingController();
+  final _internetConnectionService = InternetConnectionService();
 
   void init() async {
+    await checkInternetConnection();
     await fetchCurrencies();
     await getLastUpdateDate();
     getFavorites();
+  }
+
+  Future<void> checkInternetConnection() async {
+    final control = await _internetConnectionService.checkInternetConnection();
+    emit(state.copyWith(isConnectInternet: control));
   }
 
   void changeSearchedWord() {

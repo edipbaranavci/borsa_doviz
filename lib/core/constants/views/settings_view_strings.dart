@@ -22,6 +22,9 @@ class SettingsViewStrings {
   final String appVersionTitle = 'Uygulama Versiyonu';
   final String developerTitle = 'Geliştirici';
   final String websiteTitle = 'Website';
+  final String resourcesUsedTitle = 'Kullanılan Kaynaklar';
+  final String resourcesUsedSubTitle =
+      'Bu uygulamanın geliştirme sürecinde kullanılan kaynaklar';
   final String websiteSubTitle =
       'Geliştiricinin websitesini ziyaret edebilirsin';
 }

@@ -21,7 +21,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title, style: context.general.textTheme.titleLarge),
+      title: Text(
+        title,
+        style: context.general.textTheme.titleLarge?.copyWith(
+          color:
+              context.general.appTheme.brightness == Brightness.dark
+                  ? context.general.colorScheme.primary
+                  : context.general.colorScheme.secondary,
+        ),
+      ),
       // centerTitle: true,
       leading:
           isHideBackButton
